@@ -6,7 +6,7 @@
             <name>OcaAldini</name>
             <source-roots>
                 <root id="src.dir"/>
-                <root id="src.recursos.dir" name="recursos"/>
+                <root id="src.recursos.dir"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>

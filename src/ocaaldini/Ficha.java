@@ -31,7 +31,7 @@ public class Ficha extends JPanel implements Runnable {
     private Image fichaIMG;
 
     public Ficha(int numIMG, int casilla, ArrayList<Casilla> casillas) {
-        fichaIMG = new ImageIcon("/Imagenes/" + numIMG + ".png").getImage();
+        fichaIMG = new ImageIcon("recursos/Imagenes/" + numIMG + ".png").getImage();
         this.setSize(30, 30);
         this.setOpaque(false);
         this.setVisible(true);
