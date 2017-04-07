@@ -59,6 +59,7 @@ public class Juego extends Canvas implements Runnable {
     int jugador, jugador2;
     boolean conectados = false;
     boolean inicio = false;
+    boolean yaSeEnvio = false;
 
     Socket skCliente;
 
@@ -90,7 +91,7 @@ public class Juego extends Canvas implements Runnable {
     }
 
     public static void main(String[] args) {
-        Juego juego = new Juego(1);
+        Juego juego = new Juego(2);
         juego.iniciar();
     }
 
@@ -122,7 +123,7 @@ public class Juego extends Canvas implements Runnable {
     private void actualizar() {
         if (inicio) {
             teclado.actualizar();
-            teclado.inicio = true;
+            teclado.end = end;
         }
         aps++;
     }
@@ -172,6 +173,11 @@ public class Juego extends Canvas implements Runnable {
             } else {
                 clip.close();
                 if (jugador2 == this.jugador) {
+                    if (!yaSeEnvio) {
+                        EnviaGanador hilo1 = new EnviaGanador(skCliente, jugador);
+                        yaSeEnvio = true;
+                    }
+                    end = true;
                     int residuo = animacion % 9;
                     if (residuo > 3 && residuo <= 6) {
                         pantalla.mostrarVaquero(50, 400, (cowBoy5));
@@ -182,11 +188,10 @@ public class Juego extends Canvas implements Runnable {
                     } else {
                         pantalla.mostrarVaquero(50, 400, (cowBoy7));
                         pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
-                        EnviaGanador hilo1 = new EnviaGanador(skCliente, jugador2);
-                        end = true;
                     }
                 } else {
                     int residuo = animacion % 9;
+                    end = true;
                     if (residuo > 3 && residuo <= 6) {
                         pantalla.mostrarVaquero2(400, 50, (cowBoy5));
                         pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
@@ -196,8 +201,6 @@ public class Juego extends Canvas implements Runnable {
                     } else {
                         pantalla.mostrarVaquero2(400, 50, (cowBoy7));
                         pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
-
-                        end = true;
                     }
                 }
             }
@@ -260,6 +263,10 @@ public class Juego extends Canvas implements Runnable {
                 referenciaContador = System.nanoTime();
             }
         }
+    }
+
+    public void gano() {
+
     }
 
     private void conecta() {

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Servidor {
 
-    AtiendeClientes cte;	// Objeto para hacer uso del proceso de lectura y escritura
+    AtiendeClientes cte;
     ArrayList<Socket> listaCliente = new ArrayList();
 
     public Servidor() {
@@ -24,12 +24,9 @@ public class Servidor {
                         OutputStream os = listaCliente.get(i).getOutputStream();
                         DataOutputStream flujoDOS = new DataOutputStream(os);   
                         flujoDOS.writeUTF("Conectados");
-                        
                     }
                 }
-            }
-
-            //ss.close();        
+            }       
         } catch (Exception e) {
             e.printStackTrace();
         }

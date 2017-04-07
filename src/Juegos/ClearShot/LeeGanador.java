@@ -8,7 +8,7 @@ class LeeGanador extends Thread {
     Socket socket;
     Juego jueg;
 
-    LeeGanador(Socket socket,Juego jueg) {
+    LeeGanador(Socket socket, Juego jueg) {
         this.socket = socket;
         this.jueg = jueg;
         start();   //Iniciar el proceso
@@ -21,24 +21,31 @@ class LeeGanador extends Thread {
                 DataInputStream flujo = new DataInputStream(aux);
                 String msj = flujo.readUTF();
                 System.out.println(msj);
-                if(msj.equals("Conectados")){
+                if (msj.equals("Conectados")) {
                     jueg.conectados = true;
-                }else if(msj.contains("1") || msj.contains("2") ){
-                    jueg.ganador = true;
-                    jueg.jugador2 = 100;
-                }else if(msj.equals("inicia")){
+                } else if (msj.contains("1") || msj.contains("2")) {
+                    if (!msj.contains("" + jueg.jugador)) {
+                        jueg.ganador = true;
+                        jueg.end = true;
+                        jueg.jugador2 = 100;
+                    } else {
+                        if (msj.contains("" + jueg.jugador)) {
+                            jueg.gano();
+                        }
+                    }
+                } else if (msj.equals("inicia")) {
                     jueg.inicio = true;
                     System.out.println("Inicia la matanza prros");
                 }
-                
+
             }
         } catch (Exception e) {
             System.out.println("Error");
         }
     }
-    
-    private int ganador(){
+
+    private int ganador() {
         return 0;
     }
-    
+
 }

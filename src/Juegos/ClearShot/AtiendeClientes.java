@@ -22,17 +22,24 @@ public class AtiendeClientes extends Thread {
 
     public void run() {
         try {
-            InputStream is = socket.getInputStream();
-            DataInputStream flujo = new DataInputStream(is);
-            
-            sleep(3000);
-            
-            mensaje = "inicia";
-            
-            for (int cont = 0; cont < listaCliente.size(); cont++) {
-                OutputStream os = listaCliente.get(cont).getOutputStream();
-                DataOutputStream flujoDOS = new DataOutputStream(os);
-                flujoDOS.writeUTF(mensaje);
+            int i = 0;
+            while (true) {
+
+                if (i == 0) {
+                    sleep(3000);
+                    mensaje = "inicia";
+                    i++;
+                } else if (i != -1){
+                    InputStream is = socket.getInputStream();
+                    DataInputStream flujo = new DataInputStream(is);
+                    mensaje = flujo.readUTF();
+                    i = -1;
+                }
+                for (int cont = 0; cont < listaCliente.size(); cont++) {
+                    OutputStream os = listaCliente.get(cont).getOutputStream();
+                    DataOutputStream flujoDOS = new DataOutputStream(os);
+                    flujoDOS.writeUTF(mensaje);
+                }
             }
         } catch (Exception e) {
             System.out.println("Error de comunicacion" + e);

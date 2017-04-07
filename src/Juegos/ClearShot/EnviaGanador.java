@@ -21,7 +21,7 @@ class EnviaGanador extends JFrame implements Runnable {
         this.Jugador = Jugador;
 
         Thread hilo = new Thread(this);
-        hilo.start();  //Inicia el Hilo, se llama automáticamente al método run()
+        hilo.start();
     }
 
     public void run() {
@@ -29,21 +29,15 @@ class EnviaGanador extends JFrame implements Runnable {
 
             boolean terminar = false;
             String mensaje;
-            while (!terminar) {      // Creamos bucle infinito para escritura
+            while (!terminar) {
                 OutputStream os = socket.getOutputStream();
                 DataOutputStream flujoDOS = new DataOutputStream(os);
-                mensaje = Jugador + "Gano";
+                mensaje = Jugador + " Gano";
                 flujoDOS.writeUTF(mensaje);
                 terminar = true;
             }
         } catch (IOException ex) {
             Logger.getLogger(EnviaGanador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(EnviaGanador.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }
-

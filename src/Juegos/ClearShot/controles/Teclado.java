@@ -15,11 +15,20 @@ public class Teclado implements KeyListener {
     public boolean disparo1;
     public boolean disparo2;
     public boolean ganador = false;
-    public boolean inicio = false;
+    public boolean end = false;
     public boolean fin = false;
+    public boolean YaSeHizo = false;
 
     public void actualizar() {
         disparo1 = teclas[KeyEvent.VK_A];
+        if (end && !YaSeHizo) {
+            Song = Sonido.cargaSonido("/ClearShot/Audio/YesPost.wav");
+            Song.start();
+            Bang = Sonido.cargaSonido("/ClearShot/Audio/Disparo.wav");
+            Bang.start();
+            ganador = true;
+            YaSeHizo = true;
+        }
     }
 
     @Override
@@ -29,15 +38,8 @@ public class Teclado implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!ganador ) {
+        if (!ganador) {
             teclas[e.getKeyCode()] = true;
-            if ((e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_L) && inicio) {
-                Song = Sonido.cargaSonido("/ClearShot/Audio/YesPost.wav");
-                Song.start();
-                Bang = Sonido.cargaSonido("/ClearShot/Audio/Disparo.wav");
-                Bang.start();
-                ganador = true;
-            }
         }
         if (e.getKeyCode() == KeyEvent.VK_ENTER && ganador == true) {
             fin = true;
