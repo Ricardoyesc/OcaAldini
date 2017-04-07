@@ -51,14 +51,9 @@ public class Casilla extends JPanel {
                 g2.drawImage(fichas.get(i).getFichaIMG(), x2, y2, 30, 30, null);
                 
                 if(i%2 ==0){
-                    y2+= y;
                     x2+= x+10;
                 }else{
                     y2 =0;
-                }
-                if(i == 3){
-                    x2 =0;
-                    y2=y;
                 }
             }
         }
