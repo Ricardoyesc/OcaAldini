@@ -7,7 +7,7 @@ public class OcaAldini {
     public static void main(String[] args) {
         TableroGUI tablero = new TableroGUI();
         
-        tablero.crearTablero(4);
+        tablero.crearTablero(2);
     }
     
 }

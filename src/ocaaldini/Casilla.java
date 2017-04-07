@@ -21,7 +21,8 @@ public class Casilla extends JPanel {
         this.corx = corx;
         this.cory = cory;
         this.tab = tab;
-        casillaIMG = new ImageIcon(this.getClass().getResource("/Imagenes/Casillas/" + numIMGCasilla + ".png")).getImage();
+        String Ruta = "/Imagenes/casillas/" + numIMGCasilla + ".png";
+        casillaIMG = new ImageIcon(this.getClass().getResource(Ruta)).getImage();
         setLocation(corx, cory);
         setSize(100, 60);
         setVisible(true);
