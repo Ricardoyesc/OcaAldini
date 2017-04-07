@@ -8,6 +8,7 @@ import Juegos.ClearShot.graficos.Vaquero;
 import herramientas.Sonido;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -15,6 +16,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.Clip;
@@ -54,15 +56,21 @@ public class Juego extends Canvas implements Runnable {
     public static Sprite cowBoy7 = new Sprite(64, 2, 1, HojaSprites.cowBoyMovimientos);
     public static Sprite cowBoyMurido = new Sprite(64, 2, 3, HojaSprites.cowBoyMovimientos);
     int animacion = 0;
+    int jugador, jugador2;
+    boolean conectados = false;
+    boolean inicio = false;
 
-    private Juego() {
+    Socket skCliente;
+
+    private Juego(int jugador) {
+        this.jugador = jugador;
         try {
             setPreferredSize(new Dimension(ANCHO, ALTO));
-            
-            clip  = Sonido.cargaSonido("/ClearShot/Audio/YesLoop.wav");
+
+            clip = Sonido.cargaSonido("/ClearShot/Audio/YesLoop.wav");
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
-            
+
             pantalla = new Pantalla(ANCHO, ALTO);
 
             teclado = new Teclado();
@@ -82,7 +90,7 @@ public class Juego extends Canvas implements Runnable {
     }
 
     public static void main(String[] args) {
-        Juego juego = new Juego();
+        Juego juego = new Juego(1);
         juego.iniciar();
     }
 
@@ -102,110 +110,124 @@ public class Juego extends Canvas implements Runnable {
     }
 
     private void finalizar() {
-        if(teclado.fin){
+        if (teclado.fin) {
             clip.close();
             ventana.dispose();
             teclado.Song.close();
-            System.exit(0); 
+            System.exit(0);
             detener();
         }
     }
 
     private void actualizar() {
-        teclado.actualizar();
+        if (inicio) {
+            teclado.actualizar();
+            teclado.inicio = true;
+        }
         aps++;
     }
 
     private void mostrar() {
         BufferStrategy estrategia = getBufferStrategy();
-        int jugador = -10;
-        if (animacion < 32767) {
-            animacion++;
-        } else {
-            animacion = 0;
-        }
         if (estrategia == null) {
             createBufferStrategy(3);
             return;
         }
-        if (teclado.disparo1) {
-            ganador = true;
-            jugador = 1;
-        }
-        if (teclado.disparo2) {
-            ganador = true;
-            jugador = 2;
-        }
-        pantalla.limpiar();
         Graphics g = estrategia.getDrawGraphics();
+
         pantalla.mostrarfondo(ANCHO, ALTO);
-        if (!ganador) {
-            int residuo = animacion % 25;
-            if (residuo > 5 && residuo <= 10) {
-                pantalla.mostrarVaquero(50, 400, (cowBoy1));
-                pantalla.mostrarVaquero2(400, 50, (cowBoy1));
-            } else if (residuo > 10 && residuo <= 15) {
-                pantalla.mostrarVaquero(50, 400, (cowBoy2));
-                pantalla.mostrarVaquero2(400, 50, (cowBoy2));
-            } else if (residuo > 15 && residuo <= 20) {
-                pantalla.mostrarVaquero(50, 400, cowBoy3);
-                pantalla.mostrarVaquero2(400, 50, (cowBoy3));
-            } else if (residuo > 20 && residuo <= 25) {
-                pantalla.mostrarVaquero(50, 400, (cowBoy4));
-                pantalla.mostrarVaquero2(400, 50, (cowBoy4));
+        if (conectados) {
+
+            jugador2 = -10;
+            if (animacion < 32767) {
+                animacion++;
             } else {
-                pantalla.mostrarVaquero(50, 400, (cowBoy5));
-                pantalla.mostrarVaquero2(400, 50, (cowBoy5));
+                animacion = 0;
             }
 
-        } else {
-            clip.close();
-            if (jugador == 1) {
-                int residuo = animacion % 9;
-                if (residuo > 3 && residuo <= 6) {
+            if (teclado.disparo1 && !ganador) {
+                ganador = true;
+                jugador2 = this.jugador;
+            }
+            pantalla.limpiar();
+            if (!ganador) {
+                int residuo = animacion % 25;
+                if (residuo > 5 && residuo <= 10) {
+                    pantalla.mostrarVaquero(50, 400, (cowBoy1));
+                    pantalla.mostrarVaquero2(400, 50, (cowBoy1));
+                } else if (residuo > 10 && residuo <= 15) {
+                    pantalla.mostrarVaquero(50, 400, (cowBoy2));
+                    pantalla.mostrarVaquero2(400, 50, (cowBoy2));
+                } else if (residuo > 15 && residuo <= 20) {
+                    pantalla.mostrarVaquero(50, 400, cowBoy3);
+                    pantalla.mostrarVaquero2(400, 50, (cowBoy3));
+                } else if (residuo > 20 && residuo <= 25) {
+                    pantalla.mostrarVaquero(50, 400, (cowBoy4));
+                    pantalla.mostrarVaquero2(400, 50, (cowBoy4));
+                } else {
                     pantalla.mostrarVaquero(50, 400, (cowBoy5));
-                    pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
-                } else if (residuo > 6 && residuo <= 9) {
-                    pantalla.mostrarVaquero(50, 400, (cowBoy6));
-                    pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
-                } else {
-                    pantalla.mostrarVaquero(50, 400, (cowBoy7));
-                    pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
-                    end = true;
-                }
-            } else if (jugador == 2) {
-                int residuo = animacion % 9;
-                if (residuo > 3 && residuo <= 6) {
                     pantalla.mostrarVaquero2(400, 50, (cowBoy5));
-                    pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
-                } else if (residuo > 6 && residuo <= 9) {
-                    pantalla.mostrarVaquero2(400, 50, (cowBoy6));
-                    pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
+                }
+
+            } else {
+                clip.close();
+                if (jugador2 == this.jugador) {
+                    int residuo = animacion % 9;
+                    if (residuo > 3 && residuo <= 6) {
+                        pantalla.mostrarVaquero(50, 400, (cowBoy5));
+                        pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
+                    } else if (residuo > 6 && residuo <= 9) {
+                        pantalla.mostrarVaquero(50, 400, (cowBoy6));
+                        pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
+                    } else {
+                        pantalla.mostrarVaquero(50, 400, (cowBoy7));
+                        pantalla.mostrarVaquero2(400, 50, (cowBoyMurido));
+                        EnviaGanador hilo1 = new EnviaGanador(skCliente, jugador2);
+                        end = true;
+                    }
                 } else {
-                    pantalla.mostrarVaquero2(400, 50, (cowBoy7));
-                    pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
-                    end = true;
+                    int residuo = animacion % 9;
+                    if (residuo > 3 && residuo <= 6) {
+                        pantalla.mostrarVaquero2(400, 50, (cowBoy5));
+                        pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
+                    } else if (residuo > 6 && residuo <= 9) {
+                        pantalla.mostrarVaquero2(400, 50, (cowBoy6));
+                        pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
+                    } else {
+                        pantalla.mostrarVaquero2(400, 50, (cowBoy7));
+                        pantalla.mostrarVaquero(50, 400, (cowBoyMurido));
+
+                        end = true;
+                    }
                 }
             }
-        }
 
-        System.arraycopy(pantalla.pixeles, 0, pixeles, 0, pixeles.length);
-        g.drawImage(background, -250, 0, this);
+            System.arraycopy(pantalla.pixeles, 0, pixeles, 0, pixeles.length);
+            g.drawImage(background, -250, 0, this);
 
-        g.drawImage(imagen, 0, 0, getWidth(), getHeight(), null);
+            g.drawImage(imagen, 0, 0, getWidth(), getHeight(), null);
 
-        g.dispose();
-        estrategia.show();
-        fps++;
+            g.dispose();
+            estrategia.show();
+            fps++;
 
-        if (end) {
-            pantalla.ganar(ANCHO, ALTO);
-            finalizar();
+            if (end) {
+                pantalla.ganar(ANCHO, ALTO);
+                finalizar();
+            }
+        } else {
+            g.setColor(Color.black);
+            g.drawString("Espere a que se conecte su contricante", 130, 60);
+            g.dispose();
+            estrategia.show();
+
         }
     }
 
     @Override
     public void run() {
+
+        conecta();
         final int NS_POR_SEGUNDO = 1000000000;
         final byte APS_OBJETIVO = 60;
         final double NS_POR_ACTUALIZACION = NS_POR_SEGUNDO / APS_OBJETIVO;
@@ -237,6 +259,16 @@ public class Juego extends Canvas implements Runnable {
                 fps = 0;
                 referenciaContador = System.nanoTime();
             }
+        }
+    }
+
+    private void conecta() {
+        try {
+            skCliente = new Socket("localhost", 5000);
+            LeeGanador hilo2 = new LeeGanador(skCliente, this);    //hilo que lee, se envía como parámetro el Socket				   
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
