@@ -36,14 +36,14 @@ public class TableroGUI extends JFrame implements ActionListener, Runnable {
         this.numJugadores = numJugadores;
 
         table.setSize(1280, 720);
-        table.setContentPane(new JLabel(new ImageIcon("F:/OcaAldini/Imagenes/Tablero.png")));
+        table.setContentPane(new JLabel(new ImageIcon("/Imagenes/Tablero.png")));
         table.setLocationRelativeTo(null);
         table.setLayout(null);
         table.setResizable(false);
         table.setDefaultCloseOperation(table.EXIT_ON_CLOSE);
 
         dados = new JButton();
-        ImageIcon icon = new ImageIcon("Imagenes/Dados.png");
+        ImageIcon icon = new ImageIcon("/Imagenes/Dados.png");
         dados.setIcon(icon);
         dados.addActionListener(this);
         dados.setSize(180, 75);

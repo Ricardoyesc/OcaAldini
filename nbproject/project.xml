@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>OcaAldini</name>
             <source-roots>
+                <root id="src.recursos.dir" name="recursos"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
